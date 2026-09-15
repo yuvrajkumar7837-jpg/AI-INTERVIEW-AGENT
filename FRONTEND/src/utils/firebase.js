@@ -9,8 +9,8 @@ import {getAuth, GoogleAuthProvider} from "firebase/auth"
 
 
 const firebaseConfig = {
-//   apiKey: import.meta.env.VITE_FIREBASE_APIKEY,
-  apiKey : "AIzaSyDdMCF__OMHs7xrtzHRzfP4OmCvLtMpRjw",
+  apiKey: import.meta.env.VITE_FIREBASE_APIKEY,
+  // apiKey : "AIzaSyDdMCF__OMHs7xrtzHRzfP4OmCvLtMpRjw",
   authDomain: "ai-interview-agent-84b74.firebaseapp.com",
   projectId: "ai-interview-agent-84b74",
   storageBucket: "ai-interview-agent-84b74.firebasestorage.app",

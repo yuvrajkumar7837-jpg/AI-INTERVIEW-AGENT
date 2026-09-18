@@ -1,38 +1,42 @@
-// Data from frontend , create user , store token in cookies
-import User from "../models/user_models.js";
-import generateToken from "../config/token.js";            
-export const googleAuth = async(req , res)=>{
+import User from '../models/user_models.js'
+import generateToken from '../config/token.js'
+import { verifyFirebaseIdToken } from '../services/firebaseAuth.service.js'
 
-    try {
-        const{name ,email} = req.body
-        let user = await User.findOne({email})
-        if(!user){
-            user = await User.create ({
-                name, email
-            })
-        }
-        let token = await generateToken(user._id);
-        res.cookie("token" , token , {
-            httpOnly :true , 
-            secure : false,
-            sameSite  : "strict" , 
-            maxAge : 7 *24*60*60*1000,
-
-        })
-
-        return res.status(200).json(user)
-    } catch (error) {    
-        return res.status(500).json({message : `Error occured ${error}`})
-        
-    }
-
+const cookieOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'strict',
+  maxAge: 7 * 24 * 60 * 60 * 1000,
 }
 
-export const logout = async(req , res)=>{
-    try {
-        await res.clearCookie("token")
-        return res.status(200).json({message:"Logout Successfully"})
-    } catch (error) {
-        res.status( 500 ).json({message :  " Logut Error"})
+export const googleAuth = async (req, res) => {
+  try {
+    const { idToken } = req.body
+    const { name, email } = await verifyFirebaseIdToken(idToken)
+
+    let user = await User.findOne({ email })
+    if (!user) {
+      user = await User.create({ name, email })
     }
+
+    const token = await generateToken(user._id)
+    res.cookie('token', token, cookieOptions)
+
+    return res.status(200).json(user)
+  } catch (error) {
+    return res.status(401).json({ message: error.message || 'Google authentication failed' })
+  }
+}
+
+export const logout = async (req, res) => {
+  try {
+    res.clearCookie('token', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+    })
+    return res.status(200).json({ message: 'Logout Successfully' })
+  } catch (error) {
+    return res.status(500).json({ message: 'Logout Error' })
+  }
 }

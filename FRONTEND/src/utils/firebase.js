@@ -1,28 +1,21 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-import {getAuth, GoogleAuthProvider} from "firebase/auth"
-
-// Your web app's Firebase configuration
-
-
+import { initializeApp } from 'firebase/app'
+import { getAuth, GoogleAuthProvider } from 'firebase/auth'
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_APIKEY,
-  // apiKey : "AIzaSyDdMCF__OMHs7xrtzHRzfP4OmCvLtMpRjw",
-  authDomain: "ai-interview-agent-84b74.firebaseapp.com",
-  projectId: "ai-interview-agent-84b74",
-  storageBucket: "ai-interview-agent-84b74.firebasestorage.app",
-  messagingSenderId: "818635065335",
-  appId: "1:818635065335:web:dcfa83be270ab5eb0f90f2"
-};
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+}
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+if (!firebaseConfig.apiKey) {
+  console.error('Missing VITE_FIREBASE_* environment variables. Copy FRONTEND/.env.example to FRONTEND/.env')
+}
 
+const app = initializeApp(firebaseConfig)
 const auth = getAuth(app)
-
 const provider = new GoogleAuthProvider()
 
-export{auth ,provider}
+export { auth, provider }

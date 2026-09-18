@@ -1,7 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
-import axios from 'axios'
-import { ServerUrl } from '../App'
+import api from '../services/api'
 import { setUser } from '../redux/userslice'
 import { motion } from 'framer-motion'
 
@@ -12,9 +11,9 @@ export const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.get(ServerUrl + 'api/auth/logout', { withCredentials: true })
+      await api.get('/api/auth/logout')
       dispatch(setUser(null))
-      window.location.reload()
+      navigate('/')
     } catch (error) {
       console.error('Logout error:', error)
     }

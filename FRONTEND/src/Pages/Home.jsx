@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { Navbar } from './Navbar'
+import { Navbar } from '../Components/Navbar'
 import { motion } from 'framer-motion'
 
 export const Home = () => {

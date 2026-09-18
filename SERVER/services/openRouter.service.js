@@ -1,52 +1,65 @@
-// First API call with reasoning
-let response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-  method: "POST",
-  headers: {
-    "Authorization": `Bearer ${PROCESS.env.OPENROUTER_API_KEY}`,
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    "model": "~openai/gpt-astra-latest",
-    "messages": [
-      {
-        "role": "user",
-        "content": "How many r's are in the word 'strawberry'?"
-      }
-    ],
-    "reasoning": {"enabled": true}
+import axios from 'axios'
+
+const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions'
+
+export async function chatCompletion({
+  messages,
+  model = process.env.OPENROUTER_MODEL || 'openai/gpt-4o-mini',
+  temperature = 0.4,
+  responseFormat,
+} = {}) {
+  const apiKey = process.env.OPENROUTER_API_KEY
+
+  if (!apiKey) {
+    throw new Error('OPENROUTER_API_KEY is not configured')
+  }
+
+  if (!Array.isArray(messages) || messages.length === 0) {
+    throw new Error('messages must be a non-empty array')
+  }
+
+  const payload = {
+    model,
+    messages,
+    temperature,
+  }
+
+  if (responseFormat) {
+    payload.response_format = responseFormat
+  }
+
+  const { data } = await axios.post(OPENROUTER_URL, payload, {
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    timeout: 60000,
   })
-});
 
-// Extract the assistant message with reasoning_details and save it to the response variable
-const result = await response.json();
-response = result.choices[0].message;
+  const content = data?.choices?.[0]?.message?.content
+  if (!content) {
+    throw new Error('OpenRouter returned an empty response')
+  }
 
-// Preserve the assistant message with reasoning_details
-const messages = [
-  {
-    role: 'user',
-    content: "How many r's are in the word 'strawberry'?",
-  },
-  {
-    role: 'assistant',
-    content: response.content,
-    reasoning_details: response.reasoning_details, // Pass back unmodified
-  },
-  {
-    role: 'user',
-    content: "Are you sure? Think carefully.",
-  },
-];
+  return {
+    content,
+    model: data.model,
+    usage: data.usage,
+  }
+}
 
-// Second API call - model continues reasoning from where it left off
-const response2 = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-  method: "POST",
-  headers: {
-    "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify({
-    "model": "~openai/gpt-astra-latest",
-    "messages": messages  // Includes preserved reasoning_details
+export async function chatCompletionJson(options) {
+  const result = await chatCompletion({
+    ...options,
+    responseFormat: { type: 'json_object' },
   })
-});
+
+  try {
+    return {
+      ...result,
+      json: JSON.parse(result.content),
+    }
+  } catch {
+    throw new Error('OpenRouter did not return valid JSON')
+  }
+}

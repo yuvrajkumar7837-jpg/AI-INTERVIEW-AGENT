@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import authRouter from './routes/auth.route.js'
 import userRouter from './routes/user.route.js'
+import interviewRouter from './routes/interview.route.js'
 
 const app = express()
 const PORT = process.env.PORT || 8000
@@ -19,11 +20,13 @@ app.use(cookieParser())
 
 app.use('/api/auth', authRouter)
 app.use('/api/user', userRouter)
+app.use('/api/interviews', interviewRouter)
 
 app.use((err, req, res, next) => {
   console.error(err)
-  res.status(err.status || 500).json({
-    message: err.message || 'Internal server error',
+  const status = err.code === 'LIMIT_FILE_SIZE' ? 413 : err.name === 'ValidationError' || err.name === 'CastError' ? 400 : (err.status || 500)
+  res.status(status).json({
+    message: status >= 500 ? 'Internal server error' : (err.message || 'Request failed'),
   })
 })
 

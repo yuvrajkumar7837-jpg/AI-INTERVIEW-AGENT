@@ -1,17 +1,17 @@
 import axios from 'axios'
 
 export async function verifyFirebaseIdToken(idToken) {
-  const apiKey = process.env.FIREBASE_API_KEY
-
-  if (!apiKey) {
-    throw new Error('FIREBASE_API_KEY is not configured')
-  }
-
   if (!idToken) {
     throw new Error('Missing Firebase ID token')
   }
 
   try {
+    const apiKey = process.env.FIREBASE_API_KEY
+    if (!apiKey) {
+      const { data } = await axios.get('https://oauth2.googleapis.com/tokeninfo', { params: { id_token: idToken } })
+      if (!data?.email || data.email_verified === 'false') throw new Error('Invalid Google ID token')
+      return { email: data.email, name: data.name || data.email.split('@')[0] }
+    }
     const { data } = await axios.post(
       `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${apiKey}`,
       { idToken }

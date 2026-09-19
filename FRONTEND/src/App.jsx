@@ -5,6 +5,8 @@ import { useEffect } from 'react'
 import { setUser } from './redux/userslice'
 import { useDispatch } from 'react-redux'
 import api from './services/api'
+import { InterviewPage } from './Pages/InterviewPage'
+import { InterviewReport } from './Pages/InterviewReport'
 
 function App() {
   const dispatch = useDispatch()
@@ -29,6 +31,8 @@ function App() {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/auth" element={<Auth />} />
+      <Route path="/interview/:id" element={<InterviewPage />} />
+      <Route path="/report/:id" element={<InterviewReport />} />
     </Routes>
   )
 }

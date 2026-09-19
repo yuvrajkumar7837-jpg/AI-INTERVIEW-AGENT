@@ -1,7 +1,3 @@
-import React from 'react'
-
-export const Step1Setup = ({onstart}) => {
-  return (
-    <div>Step1Setup</div>
-  )
-}
+export const Step1Setup = ({ onstart }) => (
+  <button type="button" onClick={onstart}>Start interview</button>
+)

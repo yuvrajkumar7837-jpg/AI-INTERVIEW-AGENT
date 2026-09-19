@@ -1,7 +1,3 @@
-import React from 'react'
-
-export const Step2Interview = ({interviewData , onfinish    }) => {
-  return (
-    <div>Step2Interview</div>
-  )
-}
+export const Step2Interview = ({ interviewData, onfinish }) => (
+  <button type="button" onClick={() => onfinish(interviewData)}>Finish interview</button>
+)

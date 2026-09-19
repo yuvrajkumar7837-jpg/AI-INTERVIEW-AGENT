@@ -44,7 +44,7 @@ export const Home = () => {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => navigate('/')}
+                onClick={() => navigate('/interview')}
                 className="btn-pill-glow px-7 py-3 text-sm cursor-pointer"
               >
                 Start New Session
@@ -170,5 +170,4 @@ export const Home = () => {
     </div>
   )
 }
-
 

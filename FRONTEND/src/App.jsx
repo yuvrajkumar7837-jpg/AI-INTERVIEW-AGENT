@@ -13,7 +13,7 @@ function App() {
   useEffect(() => {
     const getCurrentUser = async () => {
       try {
-        const res = await api.get('/api/user/current')
+        const res = await api.get('/api/user/current' ,{ withCredentials: true })
         dispatch(setUser(res.data))
       } catch (error) {
         if (error.response?.status !== 401) {

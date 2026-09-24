@@ -11,7 +11,7 @@ export const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      await api.get('/api/auth/logout')
+      await api.get('/api/auth/logout' ,{ withCredentials: true })
       dispatch(setUser(null))
       navigate('/')
     } catch (error) {
